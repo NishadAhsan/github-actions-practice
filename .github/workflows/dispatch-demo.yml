@@ -1,0 +1,15 @@
+name: Dispatch Demo
+
+on:
+  repository_dispatch:
+    types: [run-tests, deploy-to-prod]
+
+jobs:
+  handle-dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show dispatch details
+        run: |
+          echo "Event type: ${{ github.event.action }}"
+          echo "Environment: ${{ github.event.client_payload.env }}"
+          echo "Triggered by: ${{ github.event.client_payload.initiator }}"
