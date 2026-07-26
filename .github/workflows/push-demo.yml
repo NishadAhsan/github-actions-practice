@@ -1,0 +1,19 @@
+name: Push Demo
+
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  say-hello:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Show what triggered this
+        run: |
+          echo "Triggerred by push on ${{ github.ref }}"
+          echo "Pushed by ${{ github.actor }}"
+          echo "Commit message: ${{ github.event.head_commit.message }}"
