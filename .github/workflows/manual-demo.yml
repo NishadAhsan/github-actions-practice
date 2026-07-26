@@ -1,0 +1,28 @@
+name: Manual Demo
+
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+          - info
+          - warning
+          - error
+      tags:
+        description: 'Test scenario tags'
+        required: false
+        type: string
+
+jobs:
+  show-inputs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print the inputs
+        run: |
+          echo "Log level chosen: ${{ inputs.logLevel }}"
+          echo "Tags entered: ${{ inputs.tags }}"
+          echo "Triggered manually by: ${{ github.actor }}"
