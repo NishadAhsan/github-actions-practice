@@ -18,8 +18,9 @@ jobs:
         id: hello
         uses: ./.github/workflows/hello-action
         with:
-          MY_NAME: "Kafia"
+          MY_NAME: "Kafia Zaman"
 
       - name: Show the output
+        id: output-info
         run: |
           echo "Action Returned: ${{ steps.hello.outputs.greeting }}"
