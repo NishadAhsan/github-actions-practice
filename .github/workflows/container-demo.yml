@@ -16,7 +16,7 @@ jobs:
 
       - name: Run the container action
         id: hello
-        uses: ./hello-action
+        uses: ./.github/workflows/hello-action
         with:
           MY_NAME: "Kafia"
 
