@@ -1,0 +1,24 @@
+name: Container Demo
+
+on: 
+  push:
+    branches:
+      - main
+    paths: 
+      - 'hello-action/**'
+      - '.github/workflows/container-demo.yml'
+
+jobs:
+  greet:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run the container action
+        id: hello
+        uses: ./hello-action
+        with:
+          MY_NAME: "Kafia"
+
+      - name: Show the output
+        run: echo "Action Returned: ${{ steps.hello.outputs.greeting }}"
