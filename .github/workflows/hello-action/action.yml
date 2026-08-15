@@ -1,0 +1,19 @@
+name: "Hello Action"
+description: "Greet someone from inside the docker container"
+author: "Nishad Ahsan/Claude AI"
+
+inputs:
+  MY_NAME:
+    description: "Who to greet"
+    required: true
+    default: "World"
+
+outputs:
+  greeting:
+    description: "The greeting message that was generated"
+
+runs:
+  using: "docker"
+  image: "Dockerfile"
+  args:
+    - ${{ inputs.MY_NAME }}
