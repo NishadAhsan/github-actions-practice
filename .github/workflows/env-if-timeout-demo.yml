@@ -1,0 +1,47 @@
+name: Env If Timeout Demo
+
+on: push
+
+env:
+    APP_NAME: "cert-practice-app"
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        env:
+            STAGE: "build"
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Show inherited env vars
+              run: |
+                echo "App: $APP_NAME"
+                echo "Stage: $STAGE"
+
+            - name: Simulate a slow step with a tight timeout
+              timeout-minutes: 1
+              run: |
+                echo "Starting a task/step that takes too long..."
+                sleep 70
+              
+            - name: This only runs if previous step failed
+              if: failure()
+              run: |
+                echo "The slow step timeout out, as expected. Imaging handling it here."
+
+            - name: This always runs, pass or fail
+              run: |
+                echo "Job finished - check above whether it succeeded or timed out"
+
+    deploy:
+      needs: build
+      if: github.ref == 'refs/heads/main'
+      runs-on: ubuntu-latest
+      env:
+        STAGE: "dev"
+      steps:
+        - name: Deploy Step
+          run: |
+            echo "App: $APP_NAME"
+            echo "Deploying to: $STAGE"
