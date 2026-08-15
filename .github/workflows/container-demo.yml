@@ -21,4 +21,5 @@ jobs:
           MY_NAME: "Kafia"
 
       - name: Show the output
-        run: echo "Action Returned: ${{ steps.hello.outputs.greeting }}"
+        run: |
+          echo "Action Returned: ${{ steps.hello.outputs.greeting }}"
