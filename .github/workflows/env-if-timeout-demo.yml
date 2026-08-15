@@ -30,7 +30,13 @@ jobs:
               run: |
                 echo "The slow step timeout out, as expected. Imaging handling it here."
 
+            - name: This only runs if previous step succeeded
+              if: success()
+              run: |
+                echo "The slow step completed successfully, so it will run this step."
+
             - name: This always runs, pass or fail
+              if: always()
               run: |
                 echo "Job finished - check above whether it succeeded or timed out"
 
