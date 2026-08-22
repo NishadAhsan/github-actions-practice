@@ -16,6 +16,16 @@ on:
         description: 'Test scenario tags'
         required: false
         type: string
+      dry_run:
+        description: 'Run in dry-run mode'
+        required: false
+        default: 'false'
+        type: boolean
+      environment:
+        description: 'Environment to run the tests in'
+        required: true
+        default: 'staging'
+        type: environment
 
 jobs:
   show-inputs:
@@ -25,4 +35,10 @@ jobs:
         run: |
           echo "Log level chosen: ${{ inputs.logLevel }}"
           echo "Tags entered: ${{ inputs.tags }}"
+          echo "Environment chosen: ${{ inputs.environment }}"
           echo "Triggered manually by: ${{ github.actor }}"
+
+      - name: Run automation if DEV environment is selected
+        if: ${{ inputs.environment == 'DEV' }}
+        run: |
+          echo "Running automation for DEV environment..."
