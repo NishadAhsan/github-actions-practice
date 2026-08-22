@@ -1,15 +1,17 @@
-name: Check markdown formatting
+name: review PR
 on:
   push:
     branches:
       - main
     paths:
-      - '**/*.md'
+      - 'src/**'
+      - '!**/*.md'
   pull_request:
     branches:
      - main
     paths:
-    - '**/*.md'
+      - 'src/**'
+      - '!**/*.md'
       
 permissions: 
   contents: read
@@ -20,9 +22,21 @@ jobs:
     permissions:
       pull-requests: write
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: review PR
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const prTitle = context.payload.pull_request.title;
+            const prBody = context.payload.pull_request.body;
+            const prAuthor = context.payload.pull_request.user.login;
 
-      - name: Run tests
-        run: |
-          echo "Running tests..."
+            // Add a comment to the PR
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: `Hello @${prAuthor}, thank you for your contribution! We will review your PR titled "${prTitle}".`
+            });
+
+            // claude- how to label the pr?
