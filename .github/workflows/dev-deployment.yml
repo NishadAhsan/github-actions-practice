@@ -10,7 +10,7 @@ on:
         type: environment
 
 jobs:
-  deploy:
+  deploy-to-environment:
     uses: ./.github/workflows/deploy.yml
     with:
       environment: ${{ inputs.environment }}
@@ -18,7 +18,9 @@ jobs:
       DEPLOYMENT_TOKEN: ${{ secrets.DEPLOYMENT_TOKEN }}
 
   automation-tests:
-    needs: deploy
+    needs: deploy-to-environment
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Deployed to ${{ needs.deploy.outputs.deployment-url }}\n. Running automation tests..."
+      - run: |
+          echo "Deployed to ${{ needs.deploy-to-environment.outputs.deployment-url }}"
+          echo "Running automation tests..."
