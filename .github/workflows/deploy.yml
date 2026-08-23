@@ -27,10 +27,12 @@ jobs:
 
       - name: Deploy to environment
         run: |
-          if [ "${{ inputs.environment }}" == "production" ]; then
+          if [ "${{ inputs.environment }}" == "PRODUCTION" ]; then
             echo "Deploying to production..."
-          elif [ "${{ inputs.environment }}" == "staging" ]; then
+          elif [ "${{ inputs.environment }}" == "STAGING" ]; then
             echo "Deploying to staging..."
+          elif [ "${{ inputs.environment }}" == "DEV" ]; then
+            echo "Deploying to development..."
           else
             echo "Unknown environment: ${{ inputs.environment }}"
             exit 1
@@ -39,8 +41,10 @@ jobs:
       - name: Return deployment URL
         id: return-url
         run: |
-          if [ "${{ inputs.environment }}" == "production" ]; then
-            echo "url=https://production.example.com" >> $GITHUB_ENV
-          elif [ "${{ inputs.environment }}" == "staging" ]; then
-            echo "url=https://staging.example.com" >> $GITHUB_ENV
+          if [ "${{ inputs.environment }}" == "PRODUCTION" ]; then
+            echo "url=https://production.example.com" >> $GITHUB_OUTPUT
+          elif [ "${{ inputs.environment }}" == "STAGING" ]; then
+            echo "url=https://staging.example.com" >> $GITHUB_OUTPUT
+          elif [ "${{ inputs.environment }}" == "DEV" ]; then
+            echo "url=https://dev.example.com" >> $GITHUB_OUTPUT
           fi
