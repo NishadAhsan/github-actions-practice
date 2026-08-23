@@ -1,0 +1,46 @@
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+    
+    secrets:
+      DEPLOYMENT_TOKEN:
+        required: true
+        description: "Token used for deployment authentication"
+
+    outputs:
+      deployment-url: 
+        description: "The URL of the deployed environment"
+        value: ${{ jobs.deploy.outputs.url }}
+
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    outputs:
+      url: ${{ steps.return-url.outputs.url }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Deploy to environment
+        run: |
+          if [ "${{ inputs.environment }}" == "production" ]; then
+            echo "Deploying to production..."
+          elif [ "${{ inputs.environment }}" == "staging" ]; then
+            echo "Deploying to staging..."
+          else
+            echo "Unknown environment: ${{ inputs.environment }}"
+            exit 1
+          fi
+        
+      - name: Return deployment URL
+        id: return-url
+        run: |
+          if [ "${{ inputs.environment }}" == "production" ]; then
+            echo "url=https://production.example.com" >> $GITHUB_ENV
+          elif [ "${{ inputs.environment }}" == "staging" ]; then
+            echo "url=https://staging.example.com" >> $GITHUB_ENV
+          fi

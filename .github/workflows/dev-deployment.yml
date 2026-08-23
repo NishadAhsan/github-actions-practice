@@ -1,0 +1,25 @@
+name: DEV deployment
+description: Deploy to DEV environment
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'DEV'
+        type: environment
+
+jobs:
+  deploy:
+    uses: $/.github/workflows/deploy.yml
+    with:
+      environment: ${{ inputs.environment }}
+    secrets:
+      DEPLOYMENT_TOKEN: ${{ secrets.DEPLOYMENT_TOKEN }}
+
+  automation-tests:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Deployed to ${{ needs.deploy.outputs.deployment-url }}\n. Running automation tests..."
