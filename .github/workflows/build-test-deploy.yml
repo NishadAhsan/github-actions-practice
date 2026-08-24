@@ -1,11 +1,10 @@
-name: Build, test and deloy
+name: Build, test and deploy
 
 on:
   push:
     branches:
       - main
 
-      
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,10 +16,9 @@ jobs:
         uses: actions/setup-dotnet@v6
         with:
           dotnet-version: '8.0.x'
-      
+
       - name: Check dotnet version
-        run: |
-          dotnet --info
+        run: dotnet --info
 
   test-unit:
     runs-on: ubuntu-latest
@@ -28,11 +26,14 @@ jobs:
     outputs: 
       status-message: ${{ steps.run-tests.outputs.status-message }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
       - name: Run unit tests
         id: run-tests
         run: |
           echo "Running unit tests"
-          echo "status-message=All tests passed" >> $GITHUB_ENV
+          echo "status-message=All tests passed" >> $GITHUB_OUTPUT
 
   test-lint:
     runs-on: ubuntu-latest
@@ -40,11 +41,14 @@ jobs:
     outputs:
       status-message: ${{ steps.run-tests.outputs.status-message }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
       - name: Checking lints
         id: run-tests
         run: |
           echo "Checking lints"
-          echo "status-message=Lints testing passed" >> $GITHUB_ENV
+          echo "status-message=Lints testing passed" >> $GITHUB_OUTPUT
 
   notify:
     runs-on: ubuntu-latest
@@ -54,6 +58,5 @@ jobs:
       - name: Notify
         run: |
           echo "Notifying about the build and test results"
-          echo "Lint ==> ${{ needs.test-lint.result }}: ${{ needs.test-lint.outputs.status-message }}" 
+          echo "Lint ==> ${{ needs.test-lint.result }}: ${{ needs.test-lint.outputs.status-message }}"
           echo "Unit tests ==> ${{ needs.test-unit.result }}: ${{ needs.test-unit.outputs.status-message }}"
-
