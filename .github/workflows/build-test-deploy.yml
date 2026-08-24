@@ -54,6 +54,6 @@ jobs:
       - name: Notify
         run: |
           echo "Notifying about the build and test results"
-          echo "Lint ==> ${{ needs.test-lint.outputs.result }}: ${{ needs.test-lint.outputs.message }}" 
-          echo "Unit tests ==> ${{ needs.test-unit.outputs.result }}: ${{ needs.test-unit.outputs.message }}"
+          echo "Lint ==> ${{ needs.test-lint.result }}: ${{ needs.test-lint.outputs.message }}" 
+          echo "Unit tests ==> ${{ needs.test-unit.result }}: ${{ needs.test-unit.outputs.message }}"
 
