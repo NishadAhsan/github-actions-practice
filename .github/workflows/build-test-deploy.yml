@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     outputs: 
-      status-message: ${{ steps.run-tests.outputs.status-message }}
+      status-message: ${{ steps.run-tests.outputs.STATUS_MESSAGE }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -33,13 +33,13 @@ jobs:
         id: run-tests
         run: |
           echo "Running unit tests"
-          echo "status-message=All tests passed" >> $GITHUB_OUTPUT
+          echo "STATUS_MESSAGE=All tests passed" >> $GITHUB_OUTPUT
 
   test-lint:
     runs-on: ubuntu-latest
     needs: build
     outputs:
-      status-message: ${{ steps.run-tests.outputs.status-message }}
+      status-message: ${{ steps.run-tests.outputs.STATUS_MESSAGE }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -48,7 +48,7 @@ jobs:
         id: run-tests
         run: |
           echo "Checking lints"
-          echo "status-message=Lints testing passed" >> $GITHUB_OUTPUT
+          echo "STATUS_MESSAGE=Lints testing passed" >> $GITHUB_OUTPUT
 
   notify:
     runs-on: ubuntu-latest
