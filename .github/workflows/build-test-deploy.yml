@@ -26,25 +26,25 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     outputs: 
-      message: ${{ steps.run-tests.outputs.message }}
+      status-message: ${{ steps.run-tests.outputs.status-message }}
     steps:
       - name: Run unit tests
         id: run-tests
         run: |
           echo "Running unit tests"
-          echo "message=All tests passed" >> $GITHUB_ENV
+          echo "status-message=All tests passed" >> $GITHUB_ENV
 
   test-lint:
     runs-on: ubuntu-latest
     needs: build
     outputs:
-      message: ${{ steps.run-tests.outputs.message }}
+      status-message: ${{ steps.run-tests.outputs.status-message }}
     steps:
       - name: Checking lints
         id: run-tests
         run: |
           echo "Checking lints"
-          echo "message=Lints testing passed" >> $GITHUB_ENV
+          echo "status-message=Lints testing passed" >> $GITHUB_ENV
 
   notify:
     runs-on: ubuntu-latest
@@ -54,6 +54,6 @@ jobs:
       - name: Notify
         run: |
           echo "Notifying about the build and test results"
-          echo "Lint ==> ${{ needs.test-lint.result }}: ${{ needs.test-lint.outputs.message }}" 
-          echo "Unit tests ==> ${{ needs.test-unit.result }}: ${{ needs.test-unit.outputs.message }}"
+          echo "Lint ==> ${{ needs.test-lint.result }}: ${{ needs.test-lint.outputs.status-message }}" 
+          echo "Unit tests ==> ${{ needs.test-unit.result }}: ${{ needs.test-unit.outputs.status-message }}"
 
