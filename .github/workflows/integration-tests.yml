@@ -12,6 +12,7 @@ on:
 jobs:
   integration-tests:
     name: Run integration tests
+    environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
 
     services:
@@ -34,6 +35,7 @@ jobs:
         ports:
           - 8911:5432
         options: >-
+          -e 
           --health-cmd "pg_isready"
           --health-interval 10s
           --health-timeout 5s
