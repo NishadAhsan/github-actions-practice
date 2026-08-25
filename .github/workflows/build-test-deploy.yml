@@ -56,6 +56,7 @@ jobs:
               ]
             }
             ```
+            '
             echo 'EOF'
           } >> $GITHUB_STEP_SUMMARY
           echo "STATUS_MESSAGE=All tests passed" >> $GITHUB_OUTPUT
