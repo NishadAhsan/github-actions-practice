@@ -1,0 +1,54 @@
+name: Integration tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to run integration tests against'
+        required: true
+        default: 'DEV'
+        type: environment
+
+jobs:
+  integration-tests:
+    name: Run integration tests
+    runs-on: ubuntu-latest
+
+    services:
+      redis:
+        image: redis:7.0.11
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      postgresql:
+        image: postgres:17
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ vars.INTEGRATION_DB_NAME }}
+        ports:
+          - 8911:5432
+        options: >-
+          --health-cmd "pg_isready -U ${{ secrets.POSTGRES_USER }} -d ${{ vars.INTEGRATION_DB_NAME }}"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+          --health-start-period 10s
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install client tools
+        run: sudo apt-get update && sudo apt-get install -y redis-tools postgresql-client
+
+      - name: Confirm redis connectivity
+        run: redis-cli ping
+      
+      - name: Confirm database connectivity
+        run: pg_isready -h localhost -p 8911 -U ${{ secrets.POSTGRES_USER }} -d ${{ vars.INTEGRATION_DB_NAME }}
