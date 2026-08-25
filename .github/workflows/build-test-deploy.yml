@@ -18,7 +18,10 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Check dotnet version
-        run: dotnet --info
+        run: | 
+          dotnet --info
+          echo "::warning::We are not building the app actually, just a dry run."
+          echo "::add-mask::NazmulAhsan"
 
   test-unit:
     runs-on: ubuntu-latest
@@ -33,7 +36,30 @@ jobs:
         id: run-tests
         run: |
           echo "Running unit tests"
+          {
+            echo 'report<<EOF'
+            echo '
+            ## Test Results
+
+            ```json
+            {
+              "version": "1.0",
+              "tests": [
+                {
+                  "name": "Test1",
+                  "status": "passed"
+                },
+                {
+                  "name": "Test2",
+                  "status": "passed"
+                }
+              ]
+            }
+            ```
+            echo 'EOF'
+          } >> $GITHUB_STEP_SUMMARY
           echo "STATUS_MESSAGE=All tests passed" >> $GITHUB_OUTPUT
+          echo "My Name is NazmulAhsan"
 
   test-lint:
     runs-on: ubuntu-latest
@@ -48,7 +74,12 @@ jobs:
         id: run-tests
         run: |
           echo "Checking lints"
+          echo "~/home/user/project/src" >> $GITHUB_PATH
           echo "STATUS_MESSAGE=Lints testing passed" >> $GITHUB_OUTPUT
+
+      - name: Test source code again
+        run: |
+          echo "$PATH"
 
   notify:
     runs-on: ubuntu-latest
@@ -57,6 +88,6 @@ jobs:
     steps:
       - name: Notify
         run: |
-          echo "Notifying about the build and test results"
+          echo "Notifying about the build and test results, authored by NazmulAhsan"
           echo "Lint ==> ${{ needs.test-lint.result }}: ${{ needs.test-lint.outputs.status-message }}"
           echo "Unit tests ==> ${{ needs.test-unit.result }}: ${{ needs.test-unit.outputs.status-message }}"
