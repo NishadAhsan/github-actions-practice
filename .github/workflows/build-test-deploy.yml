@@ -28,11 +28,16 @@ jobs:
     name: "Unit Tests"
     runs-on: ubuntu-latest
     needs: build
+    env:
+      TEST_AUTHOR: "Kafia Zaman"
     outputs: 
       status-message: ${{ steps.run-tests.outputs.STATUS_MESSAGE }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+
+      - name: Mask secret values
+        run: echo "::add-mask::TEST_AUTHOR"
 
       - name: Run unit tests
         id: run-tests
@@ -61,7 +66,7 @@ jobs:
           } >> $GITHUB_STEP_SUMMARY
           echo "::notice file=./README.md,line=10,endline=12,title=Great lines!::WORKFLOW NOTICE"
           echo "STATUS_MESSAGE=All tests passed" >> $GITHUB_OUTPUT
-          echo "My Name is NazmulAhsan"
+          echo "Test author is ${TEST_AUTHOR}"
 
   test-lint:
     runs-on: ubuntu-latest
@@ -89,9 +94,10 @@ jobs:
           echo "This is a test for stop-commands"
           stop_marker=$(uuidgen)
           echo "::stop-commands::$stop_marker"
-          echo "This message should not be printed"
+          echo "::warning::This message should not be printed"
           echo "::$stop_marker::"
-          echo "This message should be printed"
+          echo "::notice::This message should be printed"
+  
   notify:
     runs-on: ubuntu-latest
     needs: [test-unit, test-lint]
