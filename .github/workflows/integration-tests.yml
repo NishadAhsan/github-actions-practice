@@ -50,21 +50,21 @@ jobs:
 
       - name: Confirm redis connectivity
         run: |
-          if [[ response=$(redis-cli -p 6379 ping) ]]; then
+          if response=$(redis-cli -p 6379 ping); then
             if [[ "$response" == "PONG" ]]; then
               echo "## Redis Health Check :white_check_mark:" >> "$GITHUB_STEP_SUMMARY"
               echo "" >> "$GITHUB_STEP_SUMMARY"
-              echo "Redis responded with \`$response\` -- service is reachable" >> "$GITHUB_STEP_SUMMARY"
+              echo "Redis responded with \`$response\` — service is reachable." >> "$GITHUB_STEP_SUMMARY"
             else
               echo "## Redis Health Check :x:" >> "$GITHUB_STEP_SUMMARY"
               echo "" >> "$GITHUB_STEP_SUMMARY"
-              echo "Unexpected redis response: \`$response\` -- service is not reachable" >> "$GITHUB_STEP_SUMMARY"
+              echo "Unexpected Redis response: \`$response\`." >> "$GITHUB_STEP_SUMMARY"
               exit 1
             fi
           else
             echo "## Redis Health Check :x:" >> "$GITHUB_STEP_SUMMARY"
             echo "" >> "$GITHUB_STEP_SUMMARY"
-            echo "Cannot connect to redis servvice" >> "$GITHUB_STEP_SUMMARY"
+            echo "Cannot connect to the Redis service." >> "$GITHUB_STEP_SUMMARY"
             exit 1
           fi
       
