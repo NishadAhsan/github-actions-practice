@@ -49,6 +49,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y redis-tools postgresql-client
 
       - name: Confirm redis connectivity
+        if: always()
         run: |
           if response=$(redis-cli -p 6379 ping); then
             if [[ "$response" == "PONG" ]]; then
@@ -69,6 +70,7 @@ jobs:
           fi
       
       - name: Confirm database connectivity
+        if: always()
         run: |
           if psql -h localhost -p 8911 -U ${{ vars.POSTGRES_USER }} -d ${{ vars.INTEGRATION_DB_NAME }} -c '\q'; then
             echo "## Database Health Check :white_check_mark:" >> "$GITHUB_STEP_SUMMARY"
