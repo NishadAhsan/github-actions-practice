@@ -68,17 +68,21 @@ jobs:
             echo "Cannot connect to the Redis service." >> "$GITHUB_STEP_SUMMARY"
             exit 1
           fi
+
+          echo "::debug::the response from redis-cli ping was: $response"
       
       - name: Confirm database connectivity
         if: always()
         run: |
-          if psql -h localhost -p 8911 -U ${{ vars.POSTGRES_USER }} -d ${{ vars.INTEGRATION_DB_NAME }} -c '\q'; then
+          if psql -h localhost -p 8911 -U ${{ vars.POSTGRES_USER }} -P ${{ secrets.POSTGRES_PASSWORD }} -d ${{ vars.INTEGRATION_DB_NAME }} -c '\q'; then
             echo "## Database Health Check :white_check_mark:" >> "$GITHUB_STEP_SUMMARY"
             echo "" >> "$GITHUB_STEP_SUMMARY"
             echo "Database is reachable" >> "$GITHUB_STEP_SUMMARY"
+            echo "::debug::Successfully connected to the database."
           else
             echo "## Database Health Check :x:" >> "$GITHUB_STEP_SUMMARY"
             echo "" >> "$GITHUB_STEP_SUMMARY"
             echo "Cannot connect to database" >> "$GITHUB_STEP_SUMMARY"
+            echo "::debug::Failed to connect to the database."
             exit 1
           fi
