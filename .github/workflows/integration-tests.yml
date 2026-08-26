@@ -29,7 +29,7 @@ jobs:
       postgresql:
         image: postgres:17
         env:
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_USER: ${{ vars.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_DB: ${{ vars.INTEGRATION_DB_NAME }}
         ports:
@@ -49,7 +49,34 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y redis-tools postgresql-client
 
       - name: Confirm redis connectivity
-        run: redis-cli ping
+        run: |
+          if response=$(redis-cli -p 6379 ping); then
+            if [[ "$response" == "PONG"]]; then
+              echo "## Redis Health Check :white_check_mark:" >> "$GITHUB_STEP_SUMMARY"
+              echo "" >> "$GITHUB_STEP_SUMMARY"
+              echo "Redis responded with \`$response\` -- service is reachable" >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "## Redis Health Check :x:" >> "$GITHUB_STEP_SUMMARY"
+              echo "" >> "$GITHUB_STEP_SUMMARY"
+              echo "Unexpected redis response: \`$response\` -- service is not reachable" >> "$GITHUB_STEP_SUMMARY"
+              exit 1
+            fi
+          else
+            echo "## Redis Health Check :x:" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "Cannot connect to redis servvice" >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
       
       - name: Confirm database connectivity
-        run: pg_isready -h localhost -p 8911 -U ${{ secrets.POSTGRES_USER }} -d ${{ vars.INTEGRATION_DB_NAME }}
+        run: |
+          if psql -h localhost -p 8911 -U ${{ vars.POSTGRES_USER }} -d ${{ vars.INTEGRATION_DB_NAME }} -c '\q'; then
+            echo "## Database Health Check :white_check_mark:" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "Database is reachable" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "## Database Health Check :x:" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "Cannot connect to database" >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
