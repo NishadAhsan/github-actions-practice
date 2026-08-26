@@ -73,8 +73,12 @@ jobs:
       
       - name: Confirm database connectivity
         if: always()
+        env: 
+          PGUSER: ${{ vars.POSTGRES_USER }}
+          PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          PGDATABASE: ${{ vars.INTEGRATION_DB_NAME }}
         run: |
-          if psql -h localhost -p 8911 -U ${{ vars.POSTGRES_USER }} -P ${{ secrets.POSTGRES_PASSWORD }} -d ${{ vars.INTEGRATION_DB_NAME }} -c '\q'; then
+          if psql -h localhost -p 8911 -w -v ON_ERROR_STOP=1 -c 'SELECT 1;' > /dev/null; then
             echo "## Database Health Check :white_check_mark:" >> "$GITHUB_STEP_SUMMARY"
             echo "" >> "$GITHUB_STEP_SUMMARY"
             echo "Database is reachable" >> "$GITHUB_STEP_SUMMARY"
