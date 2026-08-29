@@ -1,0 +1,12 @@
+name: Lint .NET solution (JavaScript)
+description: Verify .NET code formatting through a JavaScript action
+
+inputs:
+  solution:
+    description: Solution file to lint
+    required: false
+    default: GitHubActionsPractice.sln
+
+runs:
+  using: node24
+  main: index.js

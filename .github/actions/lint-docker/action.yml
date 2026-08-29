@@ -1,0 +1,14 @@
+name: Lint .NET solution (Docker)
+description: Verify .NET code formatting inside a .NET SDK container
+
+inputs:
+  solution:
+    description: Solution file to lint
+    required: false
+    default: GitHubActionsPractice.sln
+
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - ${{ inputs.solution }}
