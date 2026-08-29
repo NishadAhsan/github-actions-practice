@@ -27589,6 +27589,7 @@ async function run() {
     });
 
     core.info('Formatting verification passed.');
+    core.setOutput('result', 'Formatting verification passed');
   } catch (error) {
     core.setFailed(error.message);
   }

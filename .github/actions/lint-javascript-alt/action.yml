@@ -7,6 +7,10 @@ inputs:
     required: false
     default: GitHubActionsPractice.sln
 
+outputs:
+  result:
+    description: Formatting verification result
+
 runs:
   using: node24
   main: dist/index.js

@@ -16,7 +16,11 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Verify formatting
+        id: lint
         uses: ./.github/actions/lint-docker
+
+      - name: Show result
+        run: echo "${{ steps.lint.outputs.result }}"
 
   lint-javascript:
     name: JavaScript action
@@ -31,7 +35,11 @@ jobs:
           global-json-file: global.json
 
       - name: Verify formatting
+        id: lint
         uses: ./.github/actions/lint-javascript
+
+      - name: Show result
+        run: echo "${{ steps.lint.outputs.result }}"
 
   lint-javascript-alt:
     name: JavaScript action alternative
@@ -46,7 +54,11 @@ jobs:
           global-json-file: global.json
       
       - name: Verify formatting
-        uses: $/.github/actions/lint-javascript-alt
+        id: lint
+        uses: ./.github/actions/lint-javascript-alt
+
+      - name: Show result
+        run: echo "${{ steps.lint.outputs.result }}"
 
   lint-composite:
     name: Composite action
@@ -61,4 +73,8 @@ jobs:
           global-json-file: global.json
 
       - name: Verify formatting
+        id: lint
         uses: ./.github/actions/lint-composite
+
+      - name: Show result
+        run: echo "${{ steps.lint.outputs.result }}"
