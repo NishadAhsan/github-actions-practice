@@ -2,7 +2,7 @@ namespace GitHubActionsPractice.Api.Models;
 
 public class TodoItem
 {
-    public int Id { get; set; }
+    public int Id {get; set; }
 
     public required string Title { get; set; }
 
