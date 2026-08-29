@@ -1,0 +1,28 @@
+name: Matrix run fail test
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  matrix-fail:
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node: [16, 20]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: bash script
+        run: |
+          echo "Running on ${{ matrix.os }} with Node.js ${{ matrix.node }}"
+          if [ "${{ matrix.os }}" == "windows-latest" ] && [ "${{ matrix.node }}" == "20" ]; then
+            echo "This combination is set to fail."
+            exit 1
+          else
+            echo "This combination is expected to pass."
+          fi
