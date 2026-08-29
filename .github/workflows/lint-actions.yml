@@ -33,6 +33,21 @@ jobs:
       - name: Verify formatting
         uses: ./.github/actions/lint-javascript
 
+  lint-javascript-alt:
+    name: JavaScript action alternative
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+      
+      - name: Verify formatting
+        uses: $/.github/actions/lint-javascript-alt
+
   lint-composite:
     name: Composite action
     runs-on: ubuntu-latest

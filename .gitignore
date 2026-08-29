@@ -18,3 +18,4 @@ TestResults/
 *.db-shm
 *.db-wal
 .kilo/**
+.github/actions/*/node_modules/
