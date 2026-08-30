@@ -1,0 +1,91 @@
+name: Application CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: app-ci-${{ github.workflow }}-${{ github.event.pull_request.head.ref || github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  NUGET_XMLDOC_MODE: skip
+
+jobs:
+  build-test-publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+
+      - name: Restore dependencies
+        run: dotnet restore GitHubActionsPractice.sln
+
+      - name: Verify formatting
+        run: dotnet format GitHubActionsPractice.sln --verify-no-changes --no-restore
+
+      - name: Build solution
+        run: dotnet build GitHubActionsPractice.sln --configuration Release --no-restore /warnaserror
+
+      - name: Test solution
+        run: >-
+          dotnet test GitHubActionsPractice.sln --configuration Release --no-build
+          --logger "trx;LogFileName=test-results.trx"
+          --collect:"XPlat Code Coverage"
+          --results-directory TestResults
+
+      - name: Upload test and coverage results
+        if: ${{ !cancelled() && (success() || failure()) }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: test-results-${{ github.sha }}
+          path: |
+            TestResults/**/*.trx
+            TestResults/**/coverage.cobertura.xml
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Publish API
+        run: |
+          rm -rf "$RUNNER_TEMP/app-publish"
+          dotnet publish src/GitHubActionsPractice.Api/GitHubActionsPractice.Api.csproj \
+            --configuration Release \
+            --no-build \
+            --output "$RUNNER_TEMP/app-publish" \
+            /p:UseAppHost=false
+
+      - name: Verify publish output
+        run: |
+          test -f "$RUNNER_TEMP/app-publish/GitHubActionsPractice.Api.dll"
+          if find "$RUNNER_TEMP/app-publish" -type f \( -name '*.db' -o -name '*.db-shm' -o -name '*.db-wal' \) -print -quit | grep -q .; then
+            echo "Database files must not be included in the publish artifact."
+            exit 1
+          fi
+
+      - name: Upload published API
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: app-publish-${{ github.sha }}
+          path: ${{ runner.temp }}/app-publish
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
