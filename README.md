@@ -2,10 +2,6 @@
 
 ## Github Actions
 
-### Unit 1
-
-#### Basic Workflow and Events
-
 ## Todo API
 
 This repository also contains a .NET 10 minimal API backed by SQLite. It is independent from the GitHub Actions practice workflows.
