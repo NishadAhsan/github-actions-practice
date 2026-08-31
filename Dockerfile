@@ -11,6 +11,9 @@ RUN dotnet publish src/GitHubActionsPractice.Api/GitHubActionsPractice.Api.cspro
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
+LABEL org.opencontainers.image.source="https://github.com/NishadAhsan/github-actions-practice"
+LABEL org.opencontainers.image.description=".NET 10 Todo API backed by SQLite"
+LABEL org.opencontainers.image.licenses="MIT"
 ENV ASPNETCORE_HTTP_PORTS=8080
 ENV ConnectionStrings__DefaultConnection="Data Source=/app/data/todos.db"
 EXPOSE 8080
